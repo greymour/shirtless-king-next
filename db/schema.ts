@@ -3,10 +3,10 @@ import {
   text,
   integer,
   uniqueIndex,
-  ForeignKey,
 } from "drizzle-orm/sqlite-core";
 
 import { timestamp } from "./customTypes"
+import { randomUUID } from "crypto";
 
 export const inventoryItems = sqliteTable(
   "shirts",
@@ -32,7 +32,9 @@ export const sizes = sqliteTable("sizes", {
   id: integer('id').primaryKey(),
   size: text('size').notNull(),
   stockCount: integer('stockCount').notNull().default(0),
-  inventoryItemId: integer('inventoryItemId').references(() => inventoryItems.id)
+  inventoryItemId: integer('inventoryItemId').references(() => inventoryItems.id),
+  createdAt: timestamp('createdAt'),
+  updatedAt: timestamp('updatedAt'),
 })
 
 export type Size = typeof sizes.$inferSelect;
@@ -47,7 +49,8 @@ export const users = sqliteTable(
     password: text("password").notNull(),
     isSuperAdmin: integer("isSuperAdmin", { mode: "boolean" }).default(false),
     createdAt: timestamp('createdAt'),
-    updatedAt: timestamp('updatedAt')
+    updatedAt: timestamp('updatedAt'),
+    sessionId: integer('sessionId').references(() => sessions.id)
   },
   (users) => ({
     emailIdx: uniqueIndex("emailIdx").on(users.email),
@@ -56,3 +59,14 @@ export const users = sqliteTable(
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
+
+export const sessions = sqliteTable("sessions", {
+  id: integer('id').primaryKey(),
+  isExpired: integer('isExpired', {mode: "boolean"}).default(false),
+  createdAt: timestamp('createdAt'),
+  updatedAt: timestamp('updatedAt'),
+  uuid: text('uuid').$defaultFn(() => randomUUID()),
+})
+
+export type Session = typeof sessions.$inferSelect
+export type InsertSession = typeof sessions.$inferInsert

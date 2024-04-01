@@ -1,16 +1,30 @@
 'use client'
 import Image from "next/image";
 import { Heading } from "@/components/atoms"
-import { useState} from 'react'
+import { FormEvent, FormEventHandler, useState} from 'react'
+import { API_URL } from "@/utils/constants";
 // @TODO: add login stuff here
 export default function Home() {
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState<null|string>(null)
   const [password, setPassword] = useState('')
-  const handleSubmit = async (e) => {
+  const [loginError, setLoginError] = useState(null)
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!password.includes('@') || !password.includes('.')) {
       setEmailError('Please enter a valid email address')
+    }
+    const res = await fetch(API_URL.LOGIN, {
+      method: 'POST',
+      body: JSON.stringify({
+        email,
+        password,
+      })
+    });
+    if (res.ok && res.status === 200) {
+
+    } else {
+
     }
     // figure out how tf to do this
   }

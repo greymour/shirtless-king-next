@@ -27,7 +27,7 @@ export const uuid = customType<Uuid>({
   dataType() {
     return 'string'
   },
-  fromDriver(value: string): string {
+  fromDriver(): string {
     return crypto.randomUUID();
   }
 })

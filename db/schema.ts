@@ -1,15 +1,15 @@
 import {
+  integer,
   sqliteTable,
   text,
-  integer,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 
-import { timestamp } from "./customTypes"
-import { randomUUID } from "crypto";
+import { timestamp } from "db/customTypes";
+import { randomUUID } from "node:crypto";
 
 export const inventoryItems = sqliteTable(
-  "shirts",
+  "inventoryItems",
   {
     id: integer("id").primaryKey(),
     name: text("name").notNull(),
@@ -17,28 +17,30 @@ export const inventoryItems = sqliteTable(
     price: integer("price"),
     // url to image
     image: text("image"),
-    createdAt: timestamp('createdAt'),
-    updatedAt: timestamp('updatedAt'),
+    createdAt: timestamp("createdAt"),
+    updatedAt: timestamp("updatedAt"),
   },
-  (inventoryItems) => ({
+  (inventoryItems: any) => ({
     nameIdx: uniqueIndex("nameIdx").on(inventoryItems.name),
-  })
+  }),
 );
 
 export type InventoryItem = typeof inventoryItems.$inferInsert;
 export type InsertInventoryItem = typeof inventoryItems.$inferSelect;
 
 export const sizes = sqliteTable("sizes", {
-  id: integer('id').primaryKey(),
-  size: text('size').notNull(),
-  stockCount: integer('stockCount').notNull().default(0),
-  inventoryItemId: integer('inventoryItemId').references(() => inventoryItems.id),
-  createdAt: timestamp('createdAt'),
-  updatedAt: timestamp('updatedAt'),
-})
+  id: integer("id").primaryKey(),
+  size: text("size").notNull(),
+  stockCount: integer("stockCount").notNull().default(0),
+  inventoryItemId: integer("inventoryItemId").references(() =>
+    inventoryItems.id
+  ),
+  createdAt: timestamp("createdAt"),
+  updatedAt: timestamp("updatedAt"),
+});
 
 export type Size = typeof sizes.$inferSelect;
-export type InsertSize = typeof sizes.$inferInsert
+export type InsertSize = typeof sizes.$inferInsert;
 
 export const users = sqliteTable(
   "users",
@@ -48,25 +50,26 @@ export const users = sqliteTable(
     email: text("email").notNull(),
     password: text("password").notNull(),
     isSuperAdmin: integer("isSuperAdmin", { mode: "boolean" }).default(false),
-    createdAt: timestamp('createdAt'),
-    updatedAt: timestamp('updatedAt'),
-    sessionId: integer('sessionId').references(() => sessions.id)
+    createdAt: timestamp("createdAt"),
+    updatedAt: timestamp("updatedAt"),
+    sessionId: integer("sessionId").references(() => sessions.id),
   },
   (users) => ({
     emailIdx: uniqueIndex("emailIdx").on(users.email),
-  })
+  }),
 );
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
 export const sessions = sqliteTable("sessions", {
-  id: integer('id').primaryKey(),
-  isExpired: integer('isExpired', {mode: "boolean"}).default(false),
-  createdAt: timestamp('createdAt'),
-  updatedAt: timestamp('updatedAt'),
-  uuid: text('uuid').$defaultFn(() => randomUUID()),
-})
+  id: integer("id").primaryKey(),
+  isExpired: integer("isExpired", { mode: "boolean" }).default(false),
+  createdAt: timestamp("createdAt"),
+  updatedAt: timestamp("updatedAt"),
+  uuid: text("uuid").$defaultFn(() => randomUUID()),
+});
 
-export type Session = typeof sessions.$inferSelect
-export type InsertSession = typeof sessions.$inferInsert
+export type Session = typeof sessions.$inferSelect;
+export type InsertSession = typeof sessions.$inferInsert;
+

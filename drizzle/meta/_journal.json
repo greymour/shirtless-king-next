@@ -1,1 +1,13 @@
-{"version":"5","dialect":"sqlite","entries":[]}
+{
+  "version": "5",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1712035491982,
+      "tag": "0000_aberrant_donald_blake",
+      "breakpoints": true
+    }
+  ]
+}

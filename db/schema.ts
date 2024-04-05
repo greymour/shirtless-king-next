@@ -13,8 +13,6 @@ export const inventoryItems = sqliteTable(
   {
     id: integer("id").primaryKey(),
     name: text("name").notNull(),
-    // price in cents
-    price: integer("price"),
     // url to image
     image: text("image"),
     createdAt: timestamp("createdAt"),
@@ -31,6 +29,8 @@ export type InsertInventoryItem = typeof inventoryItems.$inferSelect;
 export const sizes = sqliteTable("sizes", {
   id: integer("id").primaryKey(),
   size: text("size").notNull(),
+  // price in cents
+  price: integer("price"),
   stockCount: integer("stockCount").notNull().default(0),
   inventoryItemId: integer("inventoryItemId").references(() =>
     inventoryItems.id

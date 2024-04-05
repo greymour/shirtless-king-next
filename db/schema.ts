@@ -15,8 +15,8 @@ export const inventoryItems = sqliteTable(
     name: text("name").notNull(),
     // url to image
     image: text("image"),
-    createdAt: timestamp("createdAt"),
-    updatedAt: timestamp("updatedAt"),
+    createdAt: timestamp("createdAt").notNull(),
+    updatedAt: timestamp("updatedAt").notNull(),
   },
   (inventoryItems: any) => ({
     nameIdx: uniqueIndex("nameIdx").on(inventoryItems.name),

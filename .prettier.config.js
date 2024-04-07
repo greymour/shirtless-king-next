@@ -3,5 +3,5 @@ export default config = {
   tabWidth: 2,
   semi: true,
   singleQuote: false,
-  "plugins": ["prettier-plugin-astro", "prettier-plugin-tailwindcss"]
+  "plugins": ["prettier-plugin-tailwindcss"]
 }

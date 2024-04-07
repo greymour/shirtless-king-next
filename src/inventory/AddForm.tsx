@@ -97,7 +97,7 @@ export default function AddInventoryItemForm() {
   // @TODO: figure out a way to have an arbitrary number of sizes that the user can add
   // also don't use the index for the key in the .map()
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col">
+    <form onSubmit={handleSubmit} className="flex flex-col p-4 border-slate-500 border-4">
       <div>
         <Input
           label={"Product label"}

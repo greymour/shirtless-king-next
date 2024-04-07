@@ -7,14 +7,17 @@ import {
   useState,
 } from "react";
 import { InsertInventoryItem, InsertSize } from "db/schema";
-import { Input } from "src/components/atoms";
+import { Input, InputProps, Button } from "src/components/atoms";
+import placeholderImage from 'public/shirt-placeholder.jpg'
+import { createInventoryItem } from "src/inventory/actions";
+import { SubmitButton } from "@/components/atoms/SubmitButton";
 
 type TSize = Partial<InsertSize> & { isEditing?: boolean };
 
 type SizeInputProps = {
   size?: InsertSize;
   isEditing?: boolean;
-  updateSizes: (key: string, size: TSize) => void;
+  updateSizes: (key: string, size: SizeInputProps) => void;
   uuid: string;
 };
 
@@ -26,14 +29,15 @@ function SizeInput({ size, isEditing, updateSizes, uuid }: SizeInputProps) {
 
   return (
     // display grid isn't working here for some reason, I blame treeshaking
-    <div className="gap-2 flex flex-row">
+    <fieldset name={`size-${uuid}`} className="gap-2 flex flex-row items-center">
       <Input
         label="Size"
         type="text"
         value={sizeLabel}
-        onChange={(e) => setSize(e.target.value)}
+        onChange={(e) => setSize(e.target.value.toUpperCase())}
         className="mr-2"
         disabled={!editing}
+        name={`size-${uuid}-size`}
       />
       <Input
         label="Price"
@@ -41,6 +45,7 @@ function SizeInput({ size, isEditing, updateSizes, uuid }: SizeInputProps) {
         value={price}
         onChange={(e) => setPrice(Number(e.target.value))}
         disabled={!editing}
+        name={`size-${uuid}-price`}
       />
       <Input
         label="Stock count"
@@ -48,13 +53,13 @@ function SizeInput({ size, isEditing, updateSizes, uuid }: SizeInputProps) {
         value={stockCount}
         onChange={(e) => setStockCount(Number(e.target.value))}
         disabled={!editing}
+        name={`size-${uuid}-stock`}
       />
-      <button
-        className="bg-blue-300 p-3"
-        type="button"
+      <Button
+        style={{ marginTop: '30px' }}
         onClick={() => {
           if (editing) {
-            const sizePayload: InsertSize = {
+            const sizePayload = {
               size: sizeLabel,
               price,
             };
@@ -64,18 +69,19 @@ function SizeInput({ size, isEditing, updateSizes, uuid }: SizeInputProps) {
         }}
       >
         {editing ? "Done" : "Edit"}
-      </button>
-    </div>
+      </Button>
+    </fieldset>
   );
 }
 
 export default function AddInventoryItemForm() {
   const [name, setName] = useState("");
-  const defaultEmptySize = { isEditing: true };
-  const [sizes, setSizes] = useState<Record<string, TSize>>({
+  const defaultEmptySize = { isEditing: true, size: 'M' };
+  const [sizes, setSizes] = useState<Record<string, SizeInputProps>>({
     default: defaultEmptySize,
   });
   const [image, setImage] = useState("");
+  const [imagePath, setImagePath] = useState('');
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const itemPayload: InsertInventoryItem = {
@@ -91,24 +97,32 @@ export default function AddInventoryItemForm() {
     };
   };
 
-  const editSize = (key: string, size: TSize) => {
+  const editSize = (key: string, size: SizeInputProps) => {
     setSizes({ [key]: size, ...sizes });
   };
   // @TODO: figure out a way to have an arbitrary number of sizes that the user can add
   // also don't use the index for the key in the .map()
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col p-4 border-slate-500 border-4">
-      <div>
+    <form action={createInventoryItem} className="flex flex-col p-4 bg-slate-900 border-purple-300 border-4">
+      <div className="mb-4">
+        <img
+          className="max-w-80 max-h-80 mx-auto"
+          src={image ? image : placeholderImage.src}
+        />
         <Input
           label={"Product label"}
           value={name}
+          name="name"
           onChange={(e) => setName(e.target.value)}
         />
         <Input
           label={"Product image url"}
-          value={image}
-          onChange={(e) => setImage(e.target.value)}
+          value={imagePath}
+          name="image"
+          onChange={(e) => setImagePath(e.target.value)}
+          onBlur={(e) => setImage(e.target.value)}
         />
+        <Input type="hidden" label="" value="hihihi" />
         {Object.keys(sizes).map((sizeKey) => (
           <SizeInput
             key={sizeKey}
@@ -117,17 +131,22 @@ export default function AddInventoryItemForm() {
             isEditing={sizes[sizeKey].isEditing}
           />
         ))}
-        <button
-          onClick={() =>
+        <Button
+          onClick={() => {
+            const uuid = crypto.randomUUID();
             setSizes((sizes) => ({
               ...sizes,
-              [crypto.randomUUID()]: { isEditing: true },
-            }))}
+              [uuid]: { isEditing: true, uuid, updateSizes: editSize },
+            }))
+          }
+          }
         >
           add size
-        </button>
+        </Button>
       </div>
-      <button type="submit">submit</button>
+      <Input type='hidden' name="size-uuids" label='size-uuids' onChange={() => undefined} value={Object.keys(sizes)} />
+      <Button onClick={() => console.log('sizes', sizes)}>test</Button>
+      <SubmitButton type="submit">submit</SubmitButton>
     </form>
   );
 }

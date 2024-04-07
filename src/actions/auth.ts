@@ -1,6 +1,6 @@
 'use server'
-import db from '@/data/DB'
-import { InsertSession, User, sessions, users } from '../../db/schema'
+import db from 'src/data/DB'
+import { InsertSession, User, sessions, users } from 'db/schema'
 import { eq } from 'drizzle-orm';
 
 export type AuthPayload = {
@@ -19,7 +19,7 @@ export type SignInSuccessPayload = {
 
 // @TODO: idk I'm returning status codes from these which I'm not sure if that's what I should be doing??? NextJS is fucking weird now???
 
-// flow: 
+// flow:
 // user submits sign in request, we get their email + password
 // hash pw on client? send email + hashed pw to endpoint
 // do lookup in db for that email, if user doesn't exist return a 400
@@ -36,7 +36,7 @@ export async function signIn({ email, password }: SignInPayload) {
     return 401;
   }
   const [newSession] = await db.insert(sessions).values({}).returning();
- 
+
   if (user.sessionId) {
     const [oldSession] = await db.select().from(sessions).where(eq(sessions.id, user.sessionId));
     if (!oldSession.isExpired) {

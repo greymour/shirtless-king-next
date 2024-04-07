@@ -10,7 +10,7 @@ import { InsertInventoryItem, InsertSize } from "db/schema";
 import { Input, InputProps, Button } from "src/components/atoms";
 import placeholderImage from 'public/shirt-placeholder.jpg'
 import { createInventoryItem } from "src/inventory/actions";
-import { SubmitButton } from "@/components/atoms/SubmitButton";
+import { SubmitButton } from "src/components/atoms/SubmitButton";
 
 type TSize = Partial<InsertSize> & { isEditing?: boolean };
 

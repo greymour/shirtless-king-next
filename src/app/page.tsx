@@ -1,8 +1,8 @@
 'use client'
 import Image from "next/image";
-import { Heading } from "@/components/atoms"
+import { Heading } from "src/components/atoms"
 import { FormEvent, FormEventHandler, useState} from 'react'
-import { API_URL } from "@/utils/constants";
+import { API_URL } from "src/utils/constants";
 // @TODO: add login stuff here
 export default function Home() {
   const [email, setEmail] = useState('');

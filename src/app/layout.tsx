@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Container } from "@/components/atoms";
+import { Container } from "src/components/atoms";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,13 +18,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <header>
+        <header className="py-5 mb-3 border-purple-500 border-2">
+        <Container>
           <nav>
-            <ul>
-              <li><a href="/inventory/">All items</a></li>
+            <ul className="flex">
+              <li className="mr-2"><a href="/inventory/">All items</a></li>
               <li><a href="/inventory/add/">Add item</a></li>
             </ul>
           </nav>
+        </Container>
         </header>
         <Container>{children}</Container>
         </body>

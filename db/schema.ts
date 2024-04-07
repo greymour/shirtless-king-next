@@ -8,6 +8,11 @@ import {
 import { timestamp } from "db/customTypes";
 import { randomUUID } from "node:crypto";
 
+const timestampMixin = {
+  createdAt: timestamp("createdAt").notNull().$defaultFn(() => new Date()),
+  updatedAt: timestamp("updatedAt").notNull().$defaultFn(() => new Date()),
+}
+
 export const inventoryItems = sqliteTable(
   "inventoryItems",
   {
@@ -15,8 +20,7 @@ export const inventoryItems = sqliteTable(
     name: text("name").notNull(),
     // url to image
     image: text("image"),
-    createdAt: timestamp("createdAt").notNull(),
-    updatedAt: timestamp("updatedAt").notNull(),
+    ...timestampMixin,
   },
   (inventoryItems: any) => ({
     nameIdx: uniqueIndex("nameIdx").on(inventoryItems.name),
@@ -35,8 +39,7 @@ export const sizes = sqliteTable("sizes", {
   inventoryItemId: integer("inventoryItemId").references(() =>
     inventoryItems.id
   ),
-  createdAt: timestamp("createdAt"),
-  updatedAt: timestamp("updatedAt"),
+  ...timestampMixin,
 });
 
 export type Size = typeof sizes.$inferSelect;
@@ -50,9 +53,8 @@ export const users = sqliteTable(
     email: text("email").notNull(),
     password: text("password").notNull(),
     isSuperAdmin: integer("isSuperAdmin", { mode: "boolean" }).default(false),
-    createdAt: timestamp("createdAt"),
-    updatedAt: timestamp("updatedAt"),
     sessionId: integer("sessionId").references(() => sessions.id),
+    ...timestampMixin,
   },
   (users) => ({
     emailIdx: uniqueIndex("emailIdx").on(users.email),
@@ -65,9 +67,8 @@ export type InsertUser = typeof users.$inferInsert;
 export const sessions = sqliteTable("sessions", {
   id: integer("id").primaryKey(),
   isExpired: integer("isExpired", { mode: "boolean" }).default(false),
-  createdAt: timestamp("createdAt"),
-  updatedAt: timestamp("updatedAt"),
   uuid: text("uuid").$defaultFn(() => randomUUID()),
+  ...timestampMixin,
 });
 
 export type Session = typeof sessions.$inferSelect;

@@ -23,8 +23,8 @@ export const inventoryItems = sqliteTable(
   }),
 );
 
-export type InventoryItem = typeof inventoryItems.$inferInsert;
-export type InsertInventoryItem = typeof inventoryItems.$inferSelect;
+export type InventoryItem = typeof inventoryItems.$inferSelect;
+export type InsertInventoryItem = typeof inventoryItems.$inferInsert;
 
 export const sizes = sqliteTable("sizes", {
   id: integer("id").primaryKey(),

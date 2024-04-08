@@ -10,7 +10,7 @@ import InventoryCard from 'src/inventory/InventoryCard';
 export default async function Page({ params: { id } }: { params: { id: string } }) {
   const [item] = await db.select().from(inventoryItems).where(eq(inventoryItems.id, id));
   const sizeList = await db.select().from(sizes).where(eq(sizes.inventoryItemId, id))
-  return <div>My Inventory item: {id}
+  return <div>Editing item: {id}
     <InventoryCard sizes={sizeList} {...item} />
   </div>
 }

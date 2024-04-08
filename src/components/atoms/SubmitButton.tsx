@@ -1,14 +1,13 @@
 'use client'
 
 import { useFormStatus } from 'react-dom'
-import { Button } from 'src/components/atoms';
+import { Button, ButtonProps } from 'src/components/atoms';
 
-// @TODO: just export buttonprops from the Button I guess, whatever
-export function SubmitButton({ children, ...props }: Parameters<typeof Button>) {
+export function SubmitButton({ children, ...props }: ButtonProps) {
   const { pending } = useFormStatus()
 
   return (
-    <Button type="submit" disabled={pending} {...props}>
+    <Button type="submit" disabled={props.disabled ? props.disabled && pending : pending} {...props}>
       {children}
     </Button>
   )

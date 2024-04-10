@@ -74,3 +74,15 @@ export const sessions = sqliteTable("sessions", {
 export type Session = typeof sessions.$inferSelect;
 export type InsertSession = typeof sessions.$inferInsert;
 
+export const purchases = sqliteTable("purchases", {
+  id: integer("id").primaryKey(),
+  inventoryitemId: integer("inventoryItemId").references(() => inventoryItems.id),
+  sizeId: integer("sizeId").notNull(),
+  salePrice: integer("salePrice").notNull(),
+  profit: integer("profit").notNull(),
+  itemCost: integer("itemCost").notNull(),
+  ...timestampMixin
+});
+
+export type Purchase = typeof purchases.$inferSelect;
+export type InsertPurchase = typeof purchases.$inferInsert;

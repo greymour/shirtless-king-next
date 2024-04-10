@@ -2,33 +2,30 @@
 import {
   FormEvent,
   useState,
-  useEffect,
 } from "react";
 import { InsertInventoryItem, InsertSize } from "db/schema";
-import { Input, InputProps, Button, Select, Option } from "src/components/atoms";
+import { Input, Button, Select, Option } from "src/components/atoms";
 import placeholderImage from "public/shirt-placeholder.jpg";
 import { createInventoryItem } from "src/inventory/actions";
 import { SubmitButton } from "src/components/atoms/SubmitButton";
 import { SIZE_OPTIONS } from "src/utils/constants";
-
-type TSize = Partial<InsertSize> & { isEditing?: boolean };
 
 type SizeInputProps = {
   size?: InsertSize;
   editing?: boolean;
   updateSizes: (key: string, size: SizeInputProps) => void;
   uuid: string;
+  existingSizes: string[];
 };
 
-function SizeInput({ size, updateSizes, uuid }: SizeInputProps) {
-  const [sizeLabel, setSize] = useState(size?.size || "M");
+// @TODO: sort size options consistently
+
+function SizeInput({ size, updateSizes, uuid, existingSizes }: SizeInputProps) {
+  const [sizeLabel, setSize] = useState(size?.size || SIZE_OPTIONS.M);
   const [price, setPrice] = useState(size?.price || 20);
   const [stockCount, setStockCount] = useState(0);
   const [editing, setEditing] = useState(true);
-  // useEffect(() => {
-  //   setEditing(true)
-  // }, [])
-
+  console.log('3xisting sizes: ', existingSizes)
   return (
     // display grid isn't working here for some reason, I blame treeshaking
     <fieldset
@@ -49,7 +46,10 @@ function SizeInput({ size, updateSizes, uuid }: SizeInputProps) {
         onChange={e => setSize(e.target.value)}
         disabled={!editing}
       >
-        {Object.values(SIZE_OPTIONS).map(opt => <Option value={opt} />)}
+        {Object.values(SIZE_OPTIONS).map(opt => {
+          console.log('OPT: ', opt, existingSizes.includes(opt))
+          return <Option key={opt} disabled={existingSizes.includes(opt)} value={opt} />
+        })}
       </Select>
       <Input
         label="Price"
@@ -115,7 +115,6 @@ export default function AddInventoryItemForm() {
     };
   };
 
-  // @TODO: solve the bug where a random extra size is getting added for no reason
   const submitForm = createInventoryItem.bind(null, JSON.stringify({
     name,
     image,
@@ -125,7 +124,7 @@ export default function AddInventoryItemForm() {
   const editSize = (key: string, size: SizeInputProps) => {
     setSizes({ ...sizes, [key]: size });
   };
-
+  // @TODO: figure out why tf the types are so fucked with size.size.size
   return (
     <form
       action={submitForm}
@@ -149,12 +148,23 @@ export default function AddInventoryItemForm() {
           onChange={(e) => setImagePath(e.target.value)}
           onBlur={(e) => setImage(e.target.value)}
         />
-        {Object.keys(sizes).map((sizeKey) => (
+        {Object.keys(sizes).sort((a, b) => {
+          const sizeA = sizes[a]?.size?.size;
+          const sizeB = sizes[b]?.size?.size;
+          if (!sizeB) {
+            return 0
+          }
+          if (!sizeA) {
+            return 1;
+          }
+          return sizeA < sizeB ? 0 : 1;
+        }).map((sizeKey) => (
           <SizeInput
             key={sizeKey}
             updateSizes={editSize}
             uuid={sizeKey}
             editing={sizes[sizeKey].editing}
+            existingSizes={Object.values(sizes).map(size => size.size?.size!)}
           />
         ))}
         <Button
@@ -162,18 +172,18 @@ export default function AddInventoryItemForm() {
             const uuid = crypto.randomUUID();
             setSizes((sizes) => ({
               ...sizes,
-              [uuid]: { uuid, editing: true, updateSizes: editSize },
+              [uuid]: {
+                uuid,
+                editing: true,
+                updateSizes: editSize,
+                existingSizes: Object.values(sizes).map(size => size.size?.size!)
+              },
             }));
           }}
         >
           add size
         </Button>
       </div>
-      {/* <Input
-        type="hidden"
-        name="size-uuids"
-        value={Object.keys(sizes)}
-      /> */}
       <Button onClick={() => console.log("sizes", sizes)}>test</Button>
       <SubmitButton
         type="submit"

@@ -1,13 +1,11 @@
 "use client";
-import {
-  FormEvent,
-  useState,
-} from "react";
+
 import { InsertInventoryItem, InsertSize } from "db/schema";
-import { Input, Button, Select, Option } from "src/components/atoms";
 import placeholderImage from "public/shirt-placeholder.jpg";
-import { createInventoryItem } from "src/inventory/actions";
+import { FormEvent, useState } from "react";
+import { Button, Input, Option, Select } from "src/components/atoms";
 import { SubmitButton } from "src/components/atoms/SubmitButton";
+import { createInventoryItem } from "src/inventory/actions";
 import { SIZE_OPTIONS } from "src/utils/constants";
 
 type SizeInputProps = {
@@ -25,12 +23,12 @@ function SizeInput({ size, updateSizes, uuid, existingSizes }: SizeInputProps) {
   const [price, setPrice] = useState(size?.price || 20);
   const [stockCount, setStockCount] = useState(0);
   const [editing, setEditing] = useState(true);
-  console.log('3xisting sizes: ', existingSizes)
+  console.log("3xisting sizes: ", existingSizes);
   return (
     // display grid isn't working here for some reason, I blame treeshaking
     <fieldset
       name={`size-${uuid}`}
-      className="gap-2 flex flex-row items-center"
+      className="flex flex-row items-center gap-2"
     >
       <Input
         label="Size"
@@ -43,12 +41,18 @@ function SizeInput({ size, updateSizes, uuid, existingSizes }: SizeInputProps) {
       />
       <Select
         name="sizeLabel"
-        onChange={e => setSize(e.target.value)}
+        onChange={(e) => setSize(e.target.value)}
         disabled={!editing}
       >
-        {Object.values(SIZE_OPTIONS).map(opt => {
-          console.log('OPT: ', opt, existingSizes.includes(opt))
-          return <Option key={opt} disabled={existingSizes.includes(opt)} value={opt} />
+        {Object.values(SIZE_OPTIONS).map((opt) => {
+          console.log("OPT: ", opt, existingSizes.includes(opt));
+          return (
+            <Option
+              key={opt}
+              disabled={existingSizes.includes(opt)}
+              value={opt}
+            />
+          );
         })}
       </Select>
       <Input
@@ -75,11 +79,11 @@ function SizeInput({ size, updateSizes, uuid, existingSizes }: SizeInputProps) {
               size: {
                 size: sizeLabel,
                 price,
-                stockCount,
+                stockCount
               },
               editing: false,
               uuid,
-              updateSizes,
+              updateSizes
             };
             updateSizes(uuid, sizePayload);
           }
@@ -95,31 +99,33 @@ function SizeInput({ size, updateSizes, uuid, existingSizes }: SizeInputProps) {
 export default function AddInventoryItemForm() {
   const [name, setName] = useState("");
   const [sizes, setSizes] = useState<Record<string, SizeInputProps>>({});
-  console.log('sizes: ', sizes);
+  console.log("sizes: ", sizes);
   const [image, setImage] = useState("");
   const [imagePath, setImagePath] = useState("");
-
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const itemPayload: InsertInventoryItem = {
       name,
-      image,
+      image
     };
     const sizesPayload = Object.keys(sizes).map((sizeKey) => sizes[sizeKey]);
     // @TODO: do validation
     // I have to 'use server' here I think? I hate this!
     const payload = {
       item: itemPayload,
-      sizes: sizesPayload,
+      sizes: sizesPayload
     };
   };
 
-  const submitForm = createInventoryItem.bind(null, JSON.stringify({
-    name,
-    image,
-    sizes: Object.values(sizes).map(size => size.size),
-  }));
+  const submitForm = createInventoryItem.bind(
+    null,
+    JSON.stringify({
+      name,
+      image,
+      sizes: Object.values(sizes).map((size) => size.size)
+    })
+  );
 
   const editSize = (key: string, size: SizeInputProps) => {
     setSizes({ ...sizes, [key]: size });
@@ -128,45 +134,49 @@ export default function AddInventoryItemForm() {
   return (
     <form
       action={submitForm}
-      className="flex flex-col p-4 bg-slate-900 border-purple-300 border-4"
+      className="flex flex-col border-4 border-purple-300 bg-slate-900 p-4"
     >
       <div className="mb-4">
         <img
-          className="max-w-80 max-h-80 mx-auto"
-          src={image ? image : placeholderImage.src}
+          className="mx-auto max-h-80 max-w-80"
+          src={image || placeholderImage.src}
         />
         <Input
-          label={"Product label"}
+          label="Product label"
           value={name}
           name="name"
           onChange={(e) => setName(e.target.value)}
         />
         <Input
-          label={"Product image url"}
+          label="Product image url"
           value={imagePath}
           name="image"
           onChange={(e) => setImagePath(e.target.value)}
           onBlur={(e) => setImage(e.target.value)}
         />
-        {Object.keys(sizes).sort((a, b) => {
-          const sizeA = sizes[a]?.size?.size;
-          const sizeB = sizes[b]?.size?.size;
-          if (!sizeB) {
-            return 0
-          }
-          if (!sizeA) {
-            return 1;
-          }
-          return sizeA < sizeB ? 0 : 1;
-        }).map((sizeKey) => (
-          <SizeInput
-            key={sizeKey}
-            updateSizes={editSize}
-            uuid={sizeKey}
-            editing={sizes[sizeKey].editing}
-            existingSizes={Object.values(sizes).map(size => size.size?.size!)}
-          />
-        ))}
+        {Object.keys(sizes)
+          .sort((a, b) => {
+            const sizeA = sizes[a]?.size?.size;
+            const sizeB = sizes[b]?.size?.size;
+            if (!sizeB) {
+              return 0;
+            }
+            if (!sizeA) {
+              return 1;
+            }
+            return sizeA < sizeB ? 0 : 1;
+          })
+          .map((sizeKey) => (
+            <SizeInput
+              key={sizeKey}
+              updateSizes={editSize}
+              uuid={sizeKey}
+              editing={sizes[sizeKey].editing}
+              existingSizes={Object.values(sizes).map(
+                (size) => size.size?.size!
+              )}
+            />
+          ))}
         <Button
           onClick={() => {
             const uuid = crypto.randomUUID();
@@ -176,8 +186,10 @@ export default function AddInventoryItemForm() {
                 uuid,
                 editing: true,
                 updateSizes: editSize,
-                existingSizes: Object.values(sizes).map(size => size.size?.size!)
-              },
+                existingSizes: Object.values(sizes).map(
+                  (size) => size.size?.size!
+                )
+              }
             }));
           }}
         >
@@ -187,9 +199,15 @@ export default function AddInventoryItemForm() {
       <Button onClick={() => console.log("sizes", sizes)}>test</Button>
       <SubmitButton
         type="submit"
-        disabled={Object.keys(sizes).length < 1
-          || !!Object.keys(sizes).map(key => sizes[key]).find((size: SizeInputProps) => size.editing)}
-      >submit</SubmitButton>
+        disabled={
+          Object.keys(sizes).length < 1 ||
+          !!Object.keys(sizes)
+            .map((key) => sizes[key])
+            .find((size: SizeInputProps) => size.editing)
+        }
+      >
+        submit
+      </SubmitButton>
     </form>
   );
 }

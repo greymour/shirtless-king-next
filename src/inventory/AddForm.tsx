@@ -15,7 +15,6 @@ type SizeInputProps = {
   uuid: string;
   existingSizes: string[];
 };
-
 // @TODO: sort size options consistently
 
 function SizeInput({ size, updateSizes, uuid, existingSizes }: SizeInputProps) {
@@ -23,7 +22,7 @@ function SizeInput({ size, updateSizes, uuid, existingSizes }: SizeInputProps) {
   const [price, setPrice] = useState(size?.price || 20);
   const [stockCount, setStockCount] = useState(0);
   const [editing, setEditing] = useState(true);
-  console.log("3xisting sizes: ", existingSizes);
+  console.log("Existing sizes: ", existingSizes);
   return (
     // display grid isn't working here for some reason, I blame treeshaking
     <fieldset

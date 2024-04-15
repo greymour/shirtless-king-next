@@ -16,7 +16,7 @@ export const DATABASE_URL = process.env.DATABASE_URL!
 
 export const SIZE_OPTIONS = {
   NA: 'N/A',
-  DOUBLE_XS: '2XS',
+  DOUBLE_XS: 'XXS',
   XS: 'XS',
   S: 'S',
   M: 'M',

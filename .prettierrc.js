@@ -1,7 +1,7 @@
 module.exports = {
-  trailingComma: 'none',
+  trailingComma: 'es5',
   tabWidth: 2,
-  printWidth: 80,
+  printWidth: 120,
   useTabs: false,
   semi: true,
   singleQuote: false,
@@ -10,6 +10,7 @@ module.exports = {
   arrowParens: 'always',
   jsxBracketSameLine: false,
   endOfLine: 'lf',
+  "editor.formatOnSave": true,
   tailwindConfig: './tailwind.config.js',
   overrides: [
     {

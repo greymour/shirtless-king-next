@@ -2,31 +2,31 @@ module.exports = {
   env: {
     node: true,
     browser: true,
-    es2021: true
+    es2021: true,
   },
   settings: {
     react: {
-      version: "detect"
+      version: "detect",
     },
     "import/resolver": {
       node: {
-        moduleDirectory: ["node_modules", "./"]
-      }
-    }
+        moduleDirectory: ["node_modules", "./"],
+      },
+    },
   },
   parser: "@typescript-eslint/parser",
   parserOptions: {
     project: "./tsconfig.json",
     ecmaFeatures: {
-      jsx: true
-    }
+      jsx: true,
+    },
   },
   plugins: [
     "react",
     "react-hooks",
     "prettier",
     "@typescript-eslint",
-    "simple-import-sort"
+    "simple-import-sort",
     // 'tailwindcss'
   ],
   extends: [
@@ -36,9 +36,9 @@ module.exports = {
     "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:prettier/recommended",
     "plugin:react/jsx-runtime",
-    "plugin:react-hooks/recommended"
+    "plugin:react-hooks/recommended",
+    "plugin:prettier/recommended",
     // 'plugin:tailwindcss/recommended'
   ],
   rules: {
@@ -52,9 +52,9 @@ module.exports = {
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
     "react/require-default-props": "off",
-    "react/jsx-filename-extension": [
-      1,
-      { extensions: [".js", ".jsx", ".tsx", ".ts"] }
-    ]
-  }
+    "react/jsx-props-no-spreading": "off",
+    "react/jsx-filename-extension": [1, { extensions: [".js", ".jsx", ".tsx", ".ts"] }],
+    "react/destructuring-assignment": "off",
+    indent: "off",
+  },
 };

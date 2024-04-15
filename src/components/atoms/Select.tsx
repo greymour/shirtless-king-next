@@ -1,19 +1,25 @@
 import { ChangeEventHandler, ComponentPropsWithRef } from "react";
 
-export type SelectProps = ComponentPropsWithRef<'select'> & {
+import { FormInputWrapper } from "./forms";
+import InputErrorText from "./forms/InputErrorText";
+
+export type SelectProps = ComponentPropsWithRef<"select"> & {
   label?: string;
   name: string;
   onChange: ChangeEventHandler;
-}
+  error?: string | null;
+};
 
-// @TODO: separate out the underlying <option> element
-export default function Select({ label, name, children, onChange, ...props }: SelectProps) {
+export default function Select({ label, name, children, error, onChange, ...props }: SelectProps) {
   return (
-    <label className="flex flex-col text-purple-300 font-bold">
-      {label || name}
-      <select style={{ height: '24px' }} className="mt-2 text-slate-700" name={name} onChange={onChange} {...props}>
-        {children}
-      </select>
-    </label>
-  )
+    <FormInputWrapper>
+      <label htmlFor={name} className="flex flex-col font-bold text-purple-300">
+        {label || name}
+        <select style={{ height: "24px" }} className="mt-2 text-slate-700" name={name} onChange={onChange} {...props}>
+          {children}
+        </select>
+      </label>
+      {error && <InputErrorText>{error}</InputErrorText>}
+    </FormInputWrapper>
+  );
 }

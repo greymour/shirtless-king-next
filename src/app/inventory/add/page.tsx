@@ -1,8 +1,8 @@
-import AddForm from "src/inventory/AddForm";
+import InventoryItemForm from 'src/inventory/InventoryItemForm/InventoryItemForm';
 export default function Page() {
   return (
     <div>
-      <AddForm />
+      <InventoryItemForm />
     </div>
   );
 }
